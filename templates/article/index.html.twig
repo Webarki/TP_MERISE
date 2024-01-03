@@ -1,0 +1,144 @@
+{% extends 'base.html.twig' %}
+{% block styles %}
+<link rel="stylesheet" href="../../dist/assets/css/style.css">
+{% endblock %} 
+{% block body %}
+{% if articles %} 
+<hr/>
+<!-- Tableau Admin -->
+<h3>Page Articles</h3>
+<hr/>
+    <a href="/public/article/create" class="btn btn-primary mb-3">Créer un article</a>   
+ <div class="col-xs-8 col-sm-8 col-md-12 col-xl-12 table-responsive">
+    <table class="table table-dark table-hover" align="center">
+  <tr>
+    <th>#</th>
+    <th>title</th>
+    <th>content</th>
+    <th>img</th>
+    <th>state</th>
+    <th>category</th>
+    <th>modify</th>
+    <th>created</th>
+  </tr>
+  {% for article in articles %}
+  <tr>
+    <td>
+    {{ article.id }}
+    </td>
+            <td>  
+      <a href="/public/article/view/{{ article.id }}">{{ article.title }}</a>
+      </td>
+    <td>  
+      {{ article.content|slice(0, 10) }}...
+    </td>
+        <td>  
+      <img src="{{ article.img }}" alt="" width="50" heigth="auto" />
+    </td>
+        <td>  
+        {% if  article.state  == 1 %}
+        <i class="fa-solid fa-check text-success"></i>
+      {% else %}
+<i class="fa-solid fa-circle-xmark text-danger"></i>
+      {% endif %}
+    </td>
+    <td>
+    {% for category in categorys %}
+      {% if article.id_category == category.id %}
+      {{ category.title }}
+      {% endif %}
+      {% endfor %}
+    </td>
+    {% if article.modify_at == NULL %}
+    <td>
+     NULL
+    </td>
+    {% else %}
+    <td>
+      {{ article.modify_at }}
+    </td>
+    {% endif %}
+    <td>
+      {{ article.created_at | date('d/m/Y H:m:s') }}
+    </td>
+  </tr>
+    {% endfor %}
+</table>
+    </div>
+<hr/>
+{% elseif article %}
+<!-- Vue Article-->
+<h3>Page Article</h3>
+<div class="card text-center">
+  <div class="card-header">
+    # {{ article.id }}
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">
+     {{ article.title }}
+    </h5>
+         {% if session.role == "ROLE_ADMIN" %}
+    <a href="/public/article/modify/{{ article.id }}" class="btn btn-primary">Modifier</a>   
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+Supprimer
+</button>
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Souhaitez-vous réelement supprimer cette article ?
+        <small>Cette action sera irreversible !</small>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Annuler</button>
+       <a href="/public/article/delete/{{ article.id }}" class="btn btn-danger">Supprimer</a>
+      </div>
+    </div>
+  </div>
+</div>
+<hr/>
+    {% else %}
+    {% endif %}
+    <img src="../../{{ article.img }}" class="img" alt="">
+    <p class="card-text mt-3" style="border: 0.5px solid black; padding: 20px;">{{ article.content }}</p>
+   <hr/>
+    <a href="/public/comment/create/{{ article.id }}"><button class="btn btn-secondary mb-4">Créer un commentaire</button></a>
+<hr/>
+<!-- COMMENTAIRES -->
+{% if comments %}
+<p class="h4">Commentaires de l'article :</p>
+<hr/>
+{% for comment in comments %}
+{% if comment.state == true %}
+<figure class="text-center">
+  <blockquote class="blockquote">
+    <p>{{ comment.content }}</p>
+  </blockquote>
+  <figcaption class="blockquote-footer">
+    Ecrit par <cite title="Source Title">{{ comment.username }}</cite>
+  </figcaption>
+</figure>
+<hr/>
+{% endif %}
+{% endfor %}
+{% else %}
+<p class="h3">L'article n'a aucun commentaire(s)</p>
+{% endif %}
+  </div>
+  <div class="card-footer text-body-secondary">
+   Article écrit le {{ article.created_at | date('d/m/Y') }}
+  </div>
+</div>
+<hr/>
+{% else %}
+<h3 class="mt-5">Page Article</h3>
+    <a href="/public/article/create" class="btn btn-primary mb-3">Créer un article</a>   
+<p class="text-danger h3 mt-5">Aucun article(s) n'existe(s)</p>
+{% endif %}
+{% endblock %}

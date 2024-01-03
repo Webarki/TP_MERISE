@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+{% block styles %}
+<link rel="stylesheet" href="../../dist/assets/css/style.css">
+{% endblock %} 
+{% block body %}
+{% if comments %}
+<hr/>
+    <h2 class="mb-3">Mes commentaires</h2>
+    <div class="container">
+    <div class="row">
+    <div class="col-xs-8 col-sm-8 col-md-12 col-xl-12">
+    <table class="table table-dark" align="center">
+  <tr>
+    <th>#</th>
+    <th>article</th>
+    <th>content</th>
+    <th>state</th>
+    <th>date</th>
+  </tr>
+    {% for comment in comments %}
+  <tr>
+    <td>
+    {{ comment.id }}
+    </td>
+    <td>
+      <a href="/public/article/view/{{ comment.id_article }}">
+      <i class="fa-solid fa-link"></i>
+      </a>
+    </td>
+    <td>  
+      {{ comment.content|slice(0, 10) }}
+    </td>
+    <td>
+    {% if  comment.state  == 1 %}
+        <i class="fa-solid fa-check text-success"></i>
+    {% else %}
+        <i class="fa-solid fa-circle-xmark text-danger"></i>
+    {% endif %}
+    </td>
+    <td>
+      {{ user.created_at | date('d/m/Y') }}
+    </td>
+    <td>
+<!-- Button trigger modal -->
+<span data-bs-toggle="modal" data-bs-target="#exampleModal{{ comment.id }}">
+  <i class="fa-solid fa-trash text-danger"></i>
+</span>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal{{ comment.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="color:black">
+        <p>Ëtes - vous certain de vouloir faire cela ?</p>
+        <small class="text-danger">Cette action sera irreversible !</small>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Annuler</button>
+   <a href="/public/comment/remove/{{ comment.id }}">
+   <button type="button" class="btn btn-danger">Supprimer</button>
+   </a>
+      </div>
+    </div>
+  </div>
+</div>
+</td>
+  </tr>
+    {% endfor %}
+</table>
+    </div>
+    </div>
+    </div>
+    {% else %}
+    <p class="h3 mt-5">Vous n'avez aucun commentaires</p>
+    {% endif %}
+{% endblock %}
